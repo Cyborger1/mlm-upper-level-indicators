@@ -50,11 +50,11 @@ public interface MLMUpperLevelIndicatorsConfig extends Config
 		keyName = "otherIndicatorColor",
 		name = "Other Indicator Color",
 		description = "Color of indicators on veins other players have mined",
-		position = 1
+		position = 2
 	)
 	default Color getOtherIndicatorColor()
 	{
-		return Color.GREEN;
+		return Color.YELLOW;
 	}
 
 	@ConfigItem(
