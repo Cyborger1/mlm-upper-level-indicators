@@ -105,7 +105,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 					color = config.getSelfMarkerColor();
 					break;
 				case MinedByOther:
-					color = config.showOther() ? config.getOtherMarkerColor() : null;
+					color = config.showOtherMarkers() ? config.getOtherMarkerColor() : null;
 					break;
 				default:
 					color = null;

@@ -58,12 +58,12 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "showOther",
-		name = "Show Other Players Veins",
+		keyName = "showOtherMarkers",
+		name = "Show Other Players' Markers",
 		description = "Add markers to veins other players have mined",
 		position = 3
 	)
-	default boolean showOther()
+	default boolean showOtherMarkers()
 	{
 		return true;
 	}
