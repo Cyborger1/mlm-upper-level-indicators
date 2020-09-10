@@ -68,7 +68,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 @PluginDescriptor(
 	name = "MLM Upper Level Markers",
 	description = "Adds markers to veins that have been mined in upper MLM",
-	tags = {"Motherlode", "Mine", "Marker", "MLM"}
+	tags = {"motherlode", "mine", "marker", "mlm", "mining"}
 )
 public class MLMUpperLevelMarkersPlugin extends Plugin
 {
