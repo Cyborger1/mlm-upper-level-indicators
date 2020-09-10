@@ -193,29 +193,28 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 			final WallObject obj = client.getScene().getTiles()[0][localTarget.getSceneX()][localTarget.getSceneY()].getWallObject();
 			if (obj != null && MINE_SPOTS.contains(obj.getId()))
 			{
-				final Instant prevTime;
-				final OreVeinState prevState;
+				final StateTimePair prevValue;
 
 				if (oreVeinStateMap.containsKey(target))
 				{
-					StateTimePair prevValue = oreVeinStateMap.get(target);
-					prevState = prevValue.getState();
-					prevTime = prevValue.getTime();
+					prevValue = oreVeinStateMap.get(target);
 				}
 				else
 				{
-					prevState = OreVeinState.Untouched;
-					prevTime = Instant.now();
+					prevValue = StateTimePair.builder()
+						.state(OreVeinState.Untouched)
+						.time(Instant.now()).build();
 				}
 
-				if (prevState != OreVeinState.MinedBySelf)
+				if (prevValue.getState() != OreVeinState.MinedBySelf)
 				{
 					final OreVeinState newState = actor == client.getLocalPlayer() ?
 						OreVeinState.MinedBySelf : OreVeinState.MinedByOther;
 
-					if (newState != prevState)
+					if (newState != prevValue.getState())
 					{
-						oreVeinStateMap.put(target, new StateTimePair(newState, prevTime));
+						prevValue.setState(newState);
+						oreVeinStateMap.putIfAbsent(target, prevValue);
 					}
 				}
 			}

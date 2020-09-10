@@ -26,11 +26,13 @@
 package com.mlmupperlevelmarkers;
 
 import java.time.Instant;
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 
-@Value
+@Data
+@Builder
 public class StateTimePair
 {
-	OreVeinState state;
-	Instant time;
+	private OreVeinState state;
+	private Instant time;
 }
