@@ -34,19 +34,30 @@ import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Actor;
 import static net.runelite.api.AnimationID.*;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import static net.runelite.api.ObjectID.DEPLETED_VEIN_26665;
+import static net.runelite.api.ObjectID.DEPLETED_VEIN_26666;
+import static net.runelite.api.ObjectID.DEPLETED_VEIN_26667;
+import static net.runelite.api.ObjectID.DEPLETED_VEIN_26668;
 import static net.runelite.api.ObjectID.ORE_VEIN_26661;
 import static net.runelite.api.ObjectID.ORE_VEIN_26662;
 import static net.runelite.api.ObjectID.ORE_VEIN_26663;
 import static net.runelite.api.ObjectID.ORE_VEIN_26664;
+import net.runelite.api.Perspective;
+import net.runelite.api.WallObject;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.WallObjectSpawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
 
 @Slf4j
 @PluginDescriptor(
@@ -57,8 +68,10 @@ import net.runelite.client.plugins.PluginDescriptor;
 public class MLMUpperLevelIndicatorsPlugin extends Plugin
 {
 	// From official Motherlode plugin
+	private static final int UPPER_FLOOR_HEIGHT = -490;
 	private static final Set<Integer> MOTHERLODE_MAP_REGIONS = ImmutableSet.of(14679, 14680, 14681, 14935, 14936, 14937, 15191, 15192, 15193);
 	private static final Set<Integer> MINE_SPOTS = ImmutableSet.of(ORE_VEIN_26661, ORE_VEIN_26662, ORE_VEIN_26663, ORE_VEIN_26664);
+	private static final Set<Integer> DEPLETED_SPOTS = ImmutableSet.of(DEPLETED_VEIN_26665, DEPLETED_VEIN_26666, DEPLETED_VEIN_26667, DEPLETED_VEIN_26668);
 	private static final Set<Integer> MINING_ANIMATION_IDS = ImmutableSet.of(
 		MINING_MOTHERLODE_BRONZE, MINING_MOTHERLODE_IRON, MINING_MOTHERLODE_STEEL,
 		MINING_MOTHERLODE_BLACK, MINING_MOTHERLODE_MITHRIL, MINING_MOTHERLODE_ADAMANT,
@@ -67,18 +80,17 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 		MINING_MOTHERLODE_CRYSTAL
 	);
 
-	public enum OreVeinState
-	{
-		Untouched,
-		MinedBySelf,
-		MinedByOther
-	}
-
 	@Inject
 	private Client client;
 
 	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
 	private MLMUpperLevelIndicatorsConfig config;
+
+	@Inject
+	private MLMUpperLevelIndicatorsOverlay overlay;
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean inMLM;
@@ -95,14 +107,14 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		// TODO: Overlays
+		overlayManager.add(overlay);
 		inMLM = checkInMLM();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		// TODO: Overlays
+		overlayManager.remove(overlay);
 		oreVeinStateMap.clear();
 	}
 
@@ -118,6 +130,54 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 			case LOGIN_SCREEN:
 				inMLM = false;
 				break;
+		}
+	}
+
+	@Subscribe
+	public void onAnimationChanged(AnimationChanged animationChanged)
+	{
+		if (!inMLM)
+		{
+			return;
+		}
+
+		Actor actor = animationChanged.getActor();
+		if (!MINING_ANIMATION_IDS.contains(actor.getAnimation()))
+		{
+			return;
+		}
+
+		WorldPoint target = getWorldLocationInFront(actor);
+		LocalPoint localTarget = LocalPoint.fromWorld(client, target);
+
+		if (localTarget != null && isUpstairs(localTarget))
+		{
+			WallObject obj = client.getScene().getTiles()[0][localTarget.getSceneX()][localTarget.getSceneY()].getWallObject();
+			if (obj != null && MINE_SPOTS.contains(obj.getId()))
+			{
+				OreVeinState prevState = oreVeinStateMap.getOrDefault(target, OreVeinState.Untouched);
+				if (prevState != OreVeinState.MinedBySelf)
+				{
+					OreVeinState newState = actor == client.getLocalPlayer() ?
+						OreVeinState.MinedBySelf : OreVeinState.MinedByOther;
+					oreVeinStateMap.put(target, newState);
+				}
+			}
+		}
+	}
+
+	@Subscribe
+	public void onWallObjectSpawned(WallObjectSpawned event)
+	{
+		if (!inMLM)
+		{
+			return;
+		}
+
+		WallObject obj = event.getWallObject();
+		if (DEPLETED_SPOTS.contains(obj.getId()) && isUpstairs(obj.getLocalLocation()))
+		{
+			oreVeinStateMap.remove(obj.getWorldLocation());
 		}
 	}
 
@@ -141,5 +201,52 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 		}
 
 		return true;
+	}
+
+	// From official Motherlode plugin
+	boolean isUpstairs(LocalPoint localPoint)
+	{
+		return Perspective.getTileHeight(client, localPoint, 0) < UPPER_FLOOR_HEIGHT;
+	}
+
+	private static WorldPoint getWorldLocationInFront(Actor actor)
+	{
+		final int orientation = actor.getOrientation() / 256;
+		int dx = 0, dy = 0;
+
+		switch (orientation)
+		{
+			case 0: // South
+				dy = -1;
+				break;
+			case 1: // Southwest
+				dx = -1;
+				dy = -1;
+				break;
+			case 2: // West
+				dx = -1;
+				break;
+			case 3: // Northwest
+				dx = -1;
+				dy = 1;
+				break;
+			case 4: // North
+				dy = 1;
+				break;
+			case 5: // Northeast
+				dx = 1;
+				dy = 1;
+				break;
+			case 6: // East
+				dx = 1;
+				break;
+			case 7: // Southeast
+				dx = 1;
+				dy = -1;
+				break;
+		}
+
+		final WorldPoint currWP = actor.getWorldLocation();
+		return new WorldPoint(currWP.getX() + dx, currWP.getY() + dy, currWP.getPlane());
 	}
 }
