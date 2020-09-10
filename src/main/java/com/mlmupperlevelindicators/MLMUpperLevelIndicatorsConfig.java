@@ -25,10 +25,84 @@
  */
 package com.mlmupperlevelindicators;
 
+import java.awt.Color;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.Range;
+import net.runelite.client.config.Units;
 
 @ConfigGroup("mlmupperlevelindicators")
 public interface MLMUpperLevelIndicatorsConfig extends Config
 {
+	@ConfigItem(
+		keyName = "selfIndicatorColor",
+		name = "Self Indicator Color",
+		description = "Color of indicators on veins you've mined",
+		position = 1
+	)
+	default Color getSelfIndicatorColor()
+	{
+		return Color.GREEN;
+	}
+
+	@ConfigItem(
+		keyName = "otherIndicatorColor",
+		name = "Other Indicator Color",
+		description = "Color of indicators on veins other players have mined",
+		position = 1
+	)
+	default Color getOtherIndicatorColor()
+	{
+		return Color.GREEN;
+	}
+
+	@ConfigItem(
+		keyName = "showOther",
+		name = "Show Other Players Veins",
+		description = "Add indicators to veins other players have mined",
+		position = 3
+	)
+	default boolean showOther()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = "showOnlyWhenUpstairs",
+		name = "Show Only When Upstairs",
+		description = "Only show indicators if you are upstairs",
+		position = 4
+	)
+	default boolean showOnlyWhenUpstairs()
+	{
+		return true;
+	}
+
+	// 15 and 27 are values from the osrs wiki on approximate lifetime of upper level MLM veins
+	@ConfigItem(
+		keyName = "firstTimeout",
+		name = "First Timeout",
+		description = "Darkens the indicator after a rock has been first mined for this long (-1 to disable)",
+		position = 5
+	)
+	@Units(Units.SECONDS)
+	@Range(min = -1)
+	default int getFirstTimeout()
+	{
+		return 15;
+	}
+
+	@ConfigItem(
+		keyName = "secondTimeout",
+		name = "Second Timeout",
+		description = "Darkens the indicator again after a rock has been first mined for this long (-1 to disable)",
+		position = 6
+	)
+	@Units(Units.SECONDS)
+	@Range(min = -1)
+	default int getSecondTimeout()
+	{
+		return 27;
+	}
 }

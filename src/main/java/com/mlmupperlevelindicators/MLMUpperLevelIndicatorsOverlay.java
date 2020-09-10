@@ -29,7 +29,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
+import javafx.util.Pair;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
@@ -76,9 +79,18 @@ class MLMUpperLevelIndicatorsOverlay extends Overlay
 
 		LocalPoint playerLocalPoint = localPlayer.getLocalLocation();
 
-		for (Map.Entry<WorldPoint, OreVeinState> entry : plugin.getOreVeinStateMap().entrySet())
+		if (config.showOnlyWhenUpstairs() && !plugin.isUpstairs(playerLocalPoint))
 		{
-			OreVeinState state = entry.getValue();
+			return null;
+		}
+
+		Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
+		Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
+
+		for (Map.Entry<WorldPoint, Pair<OreVeinState, Instant>> entry : plugin.getOreVeinStateMap().entrySet())
+		{
+			OreVeinState state = entry.getValue().getKey();
+			Instant time = entry.getValue().getValue();
 			LocalPoint localPoint = LocalPoint.fromWorld(client, entry.getKey());
 
 			if (localPoint == null)
@@ -86,13 +98,34 @@ class MLMUpperLevelIndicatorsOverlay extends Overlay
 				continue;
 			}
 
-			if (playerLocalPoint.distanceTo(localPoint) <= MAX_DISTANCE &&
-				(state == OreVeinState.MinedBySelf || state == OreVeinState.MinedByOther))
+			Color color;
+			switch (state)
+			{
+				case MinedBySelf:
+					color = config.getSelfIndicatorColor();
+					break;
+				case MinedByOther:
+					color = config.showOther() ? config.getOtherIndicatorColor() : null;
+					break;
+				default:
+					color = null;
+					break;
+			}
+
+			if (color != null && playerLocalPoint.distanceTo(localPoint) <= MAX_DISTANCE)
 			{
 				Polygon poly = Perspective.getCanvasTilePoly(client, localPoint);
 				if (poly != null)
 				{
-					Color color = state == OreVeinState.MinedBySelf ? Color.GREEN : Color.YELLOW;
+					Duration sinceTime = Duration.between(time, Instant.now());
+					if (firstTimeout.getSeconds() >= 0 && sinceTime.compareTo(firstTimeout) >= 0)
+					{
+						color = color.darker();
+					}
+					if (secondTimeout.getSeconds() >= 0 && sinceTime.compareTo(secondTimeout) >= 0)
+					{
+						color = color.darker();
+					}
 
 					OverlayUtil.renderPolygon(graphics, poly, color);
 				}

@@ -27,9 +27,11 @@ package com.mlmupperlevelindicators;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javafx.util.Pair;
 import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -54,6 +56,7 @@ import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.events.WallObjectSpawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -98,7 +101,10 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 	private boolean inMLM;
 
 	@Getter(AccessLevel.PACKAGE)
-	private final Map<WorldPoint, OreVeinState> oreVeinStateMap = new HashMap<>();
+	private final Map<WorldPoint, Pair<OreVeinState, Instant>> oreVeinStateMap = new HashMap<>();
+
+	private final Map<Actor, Integer> actorAnimCountMap = new HashMap<>();
+	private final Map<Actor, WorldPoint> actorLastAnimWPMap = new HashMap<>();
 
 	@Provides
 	MLMUpperLevelIndicatorsConfig provideConfig(ConfigManager configManager)
@@ -118,6 +124,8 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 	{
 		overlayManager.remove(overlay);
 		oreVeinStateMap.clear();
+		actorAnimCountMap.clear();
+		actorLastAnimWPMap.clear();
 	}
 
 	@Subscribe
@@ -127,12 +135,22 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 		{
 			case LOADING:
 				oreVeinStateMap.clear();
+				actorAnimCountMap.clear();
+				actorLastAnimWPMap.clear();
 				inMLM = checkInMLM();
 				break;
 			case LOGIN_SCREEN:
 				inMLM = false;
 				break;
 		}
+	}
+
+	@Subscribe
+	public void onPlayerDespawned(PlayerDespawned event)
+	{
+		Actor actor = event.getActor();
+		actorAnimCountMap.remove(actor);
+		actorLastAnimWPMap.remove(actor);
 	}
 
 	@Subscribe
@@ -149,20 +167,56 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 			return;
 		}
 
-		WorldPoint target = getWorldLocationInFront(actor);
-		LocalPoint localTarget = LocalPoint.fromWorld(client, target);
+		WorldPoint actorWP = actor.getWorldLocation();
+		int animCount = actorAnimCountMap.getOrDefault(actor, 0) + 1;
+		if (actorLastAnimWPMap.containsKey(actor))
+		{
+			if (!actorLastAnimWPMap.get(actor).equals(actorWP))
+			{
+				animCount = 1;
+			}
+		}
+
+		actorAnimCountMap.put(actor, animCount);
+		actorLastAnimWPMap.put(actor, actorWP);
+
+		if (animCount < 2)
+		{
+			return;
+		}
+
+		final WorldPoint target = getWorldLocationInFront(actor);
+		final LocalPoint localTarget = LocalPoint.fromWorld(client, target);
 
 		if (localTarget != null && isUpstairs(localTarget))
 		{
-			WallObject obj = client.getScene().getTiles()[0][localTarget.getSceneX()][localTarget.getSceneY()].getWallObject();
+			final WallObject obj = client.getScene().getTiles()[0][localTarget.getSceneX()][localTarget.getSceneY()].getWallObject();
 			if (obj != null && MINE_SPOTS.contains(obj.getId()))
 			{
-				OreVeinState prevState = oreVeinStateMap.getOrDefault(target, OreVeinState.Untouched);
+				final Instant prevTime;
+				final OreVeinState prevState;
+
+				if (oreVeinStateMap.containsKey(target))
+				{
+					Pair<OreVeinState, Instant> prevValue = oreVeinStateMap.get(target);
+					prevState = prevValue.getKey();
+					prevTime = prevValue.getValue();
+				}
+				else
+				{
+					prevState = OreVeinState.Untouched;
+					prevTime = Instant.now();
+				}
+
 				if (prevState != OreVeinState.MinedBySelf)
 				{
-					OreVeinState newState = actor == client.getLocalPlayer() ?
+					final OreVeinState newState = actor == client.getLocalPlayer() ?
 						OreVeinState.MinedBySelf : OreVeinState.MinedByOther;
-					oreVeinStateMap.put(target, newState);
+
+					if (newState != prevState)
+					{
+						oreVeinStateMap.put(target, new Pair<>(newState, prevTime));
+					}
 				}
 			}
 		}
