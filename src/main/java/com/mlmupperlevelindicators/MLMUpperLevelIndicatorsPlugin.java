@@ -48,6 +48,8 @@ import static net.runelite.api.ObjectID.ORE_VEIN_26663;
 import static net.runelite.api.ObjectID.ORE_VEIN_26664;
 import net.runelite.api.Perspective;
 import net.runelite.api.WallObject;
+import net.runelite.api.coords.Angle;
+import net.runelite.api.coords.Direction;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.AnimationChanged;
@@ -211,38 +213,22 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 
 	private static WorldPoint getWorldLocationInFront(Actor actor)
 	{
-		final int orientation = actor.getOrientation() / 256;
+		final Direction orientation = new Angle(actor.getOrientation()).getNearestDirection();
 		int dx = 0, dy = 0;
 
 		switch (orientation)
 		{
-			case 0: // South
+			case SOUTH:
 				dy = -1;
 				break;
-			case 1: // Southwest
-				dx = -1;
-				dy = -1;
-				break;
-			case 2: // West
+			case WEST:
 				dx = -1;
 				break;
-			case 3: // Northwest
-				dx = -1;
+			case NORTH:
 				dy = 1;
 				break;
-			case 4: // North
-				dy = 1;
-				break;
-			case 5: // Northeast
+			case EAST:
 				dx = 1;
-				dy = 1;
-				break;
-			case 6: // East
-				dx = 1;
-				break;
-			case 7: // Southeast
-				dx = 1;
-				dy = -1;
 				break;
 		}
 
