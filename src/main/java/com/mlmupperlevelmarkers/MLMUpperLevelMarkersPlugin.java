@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javafx.util.Pair;
 import javax.inject.Inject;
 import lombok.AccessLevel;
@@ -101,7 +102,7 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 	private boolean inMLM;
 
 	@Getter(AccessLevel.PACKAGE)
-	private final Map<WorldPoint, Pair<OreVeinState, Instant>> oreVeinStateMap = new HashMap<>();
+	private final Map<WorldPoint, Pair<OreVeinState, Instant>> oreVeinStateMap = new ConcurrentHashMap<>();
 
 	private final Map<Actor, Integer> actorAnimCountMap = new HashMap<>();
 	private final Map<Actor, WorldPoint> actorLastAnimWPMap = new HashMap<>();
