@@ -32,7 +32,6 @@ import java.awt.Polygon;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
-import javafx.util.Pair;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
@@ -87,10 +86,10 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		final Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
 		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
 
-		for (Map.Entry<WorldPoint, Pair<OreVeinState, Instant>> entry : plugin.getOreVeinStateMap().entrySet())
+		for (Map.Entry<WorldPoint, StateTimePair> entry : plugin.getOreVeinStateMap().entrySet())
 		{
-			final OreVeinState state = entry.getValue().getKey();
-			final Instant time = entry.getValue().getValue();
+			final OreVeinState state = entry.getValue().getState();
+			final Instant time = entry.getValue().getTime();
 			final LocalPoint localPoint = LocalPoint.fromWorld(client, entry.getKey());
 
 			if (localPoint == null)

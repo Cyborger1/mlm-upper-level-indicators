@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javafx.util.Pair;
 import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -102,7 +101,7 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 	private boolean inMLM;
 
 	@Getter(AccessLevel.PACKAGE)
-	private final Map<WorldPoint, Pair<OreVeinState, Instant>> oreVeinStateMap = new ConcurrentHashMap<>();
+	private final Map<WorldPoint, StateTimePair> oreVeinStateMap = new ConcurrentHashMap<>();
 
 	private final Map<Actor, Integer> actorAnimCountMap = new HashMap<>();
 	private final Map<Actor, WorldPoint> actorLastAnimWPMap = new HashMap<>();
@@ -199,9 +198,9 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 
 				if (oreVeinStateMap.containsKey(target))
 				{
-					Pair<OreVeinState, Instant> prevValue = oreVeinStateMap.get(target);
-					prevState = prevValue.getKey();
-					prevTime = prevValue.getValue();
+					StateTimePair prevValue = oreVeinStateMap.get(target);
+					prevState = prevValue.getState();
+					prevTime = prevValue.getTime();
 				}
 				else
 				{
@@ -216,7 +215,7 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 
 					if (newState != prevState)
 					{
-						oreVeinStateMap.put(target, new Pair<>(newState, prevTime));
+						oreVeinStateMap.put(target, new StateTimePair(newState, prevTime));
 					}
 				}
 			}
