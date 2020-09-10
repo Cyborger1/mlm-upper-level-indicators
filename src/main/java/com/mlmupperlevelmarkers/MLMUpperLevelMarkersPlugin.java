@@ -23,7 +23,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.mlmupperlevelindicators;
+package com.mlmupperlevelmarkers;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
@@ -66,11 +66,11 @@ import net.runelite.client.ui.overlay.OverlayManager;
 
 @Slf4j
 @PluginDescriptor(
-	name = "MLM Upper Level Indicators",
-	description = "Helps you remember to go back and clean up your one-rocks!",
-	tags = {"Motherlode", "Mine", "Indicator", "MLM"}
+	name = "MLM Upper Level Markers",
+	description = "Adds markers to veins that have been mined in upper MLM",
+	tags = {"Motherlode", "Mine", "Marker", "MLM"}
 )
-public class MLMUpperLevelIndicatorsPlugin extends Plugin
+public class MLMUpperLevelMarkersPlugin extends Plugin
 {
 	// From official Motherlode plugin
 	private static final int UPPER_FLOOR_HEIGHT = -490;
@@ -92,10 +92,10 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
-	private MLMUpperLevelIndicatorsConfig config;
+	private MLMUpperLevelMarkersConfig config;
 
 	@Inject
-	private MLMUpperLevelIndicatorsOverlay overlay;
+	private MLMUpperLevelMarkersOverlay overlay;
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean inMLM;
@@ -107,9 +107,9 @@ public class MLMUpperLevelIndicatorsPlugin extends Plugin
 	private final Map<Actor, WorldPoint> actorLastAnimWPMap = new HashMap<>();
 
 	@Provides
-	MLMUpperLevelIndicatorsConfig provideConfig(ConfigManager configManager)
+	MLMUpperLevelMarkersConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(MLMUpperLevelIndicatorsConfig.class);
+		return configManager.getConfig(MLMUpperLevelMarkersConfig.class);
 	}
 
 	@Override

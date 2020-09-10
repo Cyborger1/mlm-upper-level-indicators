@@ -23,11 +23,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.mlmupperlevelindicators;
+package com.mlmupperlevelmarkers;
 
-public enum OreVeinState
+import net.runelite.client.RuneLite;
+import net.runelite.client.externalplugins.ExternalPluginManager;
+
+public class MLMUpperLevelMarkersPluginTest
 {
-	Untouched,
-	MinedBySelf,
-	MinedByOther
+	public static void main(String[] args) throws Exception
+	{
+		ExternalPluginManager.loadBuiltin(MLMUpperLevelMarkersPlugin.class);
+		RuneLite.main(args);
+	}
 }

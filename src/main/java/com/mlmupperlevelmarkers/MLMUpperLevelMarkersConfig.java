@@ -23,7 +23,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.mlmupperlevelindicators;
+package com.mlmupperlevelmarkers;
 
 import java.awt.Color;
 import net.runelite.client.config.Config;
@@ -32,27 +32,27 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.Units;
 
-@ConfigGroup("mlmupperlevelindicators")
-public interface MLMUpperLevelIndicatorsConfig extends Config
+@ConfigGroup("mlmupperlevelmarkers")
+public interface MLMUpperLevelMarkersConfig extends Config
 {
 	@ConfigItem(
-		keyName = "selfIndicatorColor",
-		name = "Self Indicator Color",
-		description = "Color of indicators on veins you've mined",
+		keyName = "selfMarkerColor",
+		name = "Self Marker Color",
+		description = "Color of markers on veins you've mined",
 		position = 1
 	)
-	default Color getSelfIndicatorColor()
+	default Color getSelfMarkerColor()
 	{
 		return Color.GREEN;
 	}
 
 	@ConfigItem(
-		keyName = "otherIndicatorColor",
-		name = "Other Indicator Color",
-		description = "Color of indicators on veins other players have mined",
+		keyName = "otherMarkerColor",
+		name = "Other Marker Color",
+		description = "Color of markers on veins other players have mined",
 		position = 2
 	)
-	default Color getOtherIndicatorColor()
+	default Color getOtherMarkerColor()
 	{
 		return Color.YELLOW;
 	}
@@ -60,7 +60,7 @@ public interface MLMUpperLevelIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "showOther",
 		name = "Show Other Players Veins",
-		description = "Add indicators to veins other players have mined",
+		description = "Add markers to veins other players have mined",
 		position = 3
 	)
 	default boolean showOther()
@@ -71,7 +71,7 @@ public interface MLMUpperLevelIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "showOnlyWhenUpstairs",
 		name = "Show Only When Upstairs",
-		description = "Only show indicators if you are upstairs",
+		description = "Only show markers if you are upstairs",
 		position = 4
 	)
 	default boolean showOnlyWhenUpstairs()
@@ -83,7 +83,7 @@ public interface MLMUpperLevelIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "firstTimeout",
 		name = "First Timeout",
-		description = "Darkens the indicator after a rock has been first mined for this long (-1 to disable)",
+		description = "Darkens the marker after a vein has been first mined for this long (-1 to disable)",
 		position = 5
 	)
 	@Units(Units.SECONDS)
@@ -96,7 +96,7 @@ public interface MLMUpperLevelIndicatorsConfig extends Config
 	@ConfigItem(
 		keyName = "secondTimeout",
 		name = "Second Timeout",
-		description = "Darkens the indicator again after a rock has been first mined for this long (-1 to disable)",
+		description = "Darkens the marker again after a vein has been first mined for this long (-1 to disable)",
 		position = 6
 	)
 	@Units(Units.SECONDS)

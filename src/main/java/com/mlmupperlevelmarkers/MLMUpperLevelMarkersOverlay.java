@@ -23,7 +23,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.mlmupperlevelindicators;
+package com.mlmupperlevelmarkers;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,16 +44,16 @@ import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
 
-class MLMUpperLevelIndicatorsOverlay extends Overlay
+class MLMUpperLevelMarkersOverlay extends Overlay
 {
 	private static final int MAX_DISTANCE = 2350;
 
 	private final Client client;
-	private final MLMUpperLevelIndicatorsPlugin plugin;
-	private final MLMUpperLevelIndicatorsConfig config;
+	private final MLMUpperLevelMarkersPlugin plugin;
+	private final MLMUpperLevelMarkersConfig config;
 
 	@Inject
-	MLMUpperLevelIndicatorsOverlay(Client client, MLMUpperLevelIndicatorsPlugin plugin, MLMUpperLevelIndicatorsConfig config)
+	MLMUpperLevelMarkersOverlay(Client client, MLMUpperLevelMarkersPlugin plugin, MLMUpperLevelMarkersConfig config)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_SCENE);
@@ -71,27 +71,27 @@ class MLMUpperLevelIndicatorsOverlay extends Overlay
 			return null;
 		}
 
-		Player localPlayer = client.getLocalPlayer();
+		final Player localPlayer = client.getLocalPlayer();
 		if (localPlayer == null)
 		{
 			return null;
 		}
 
-		LocalPoint playerLocalPoint = localPlayer.getLocalLocation();
+		final LocalPoint playerLocalPoint = localPlayer.getLocalLocation();
 
 		if (config.showOnlyWhenUpstairs() && !plugin.isUpstairs(playerLocalPoint))
 		{
 			return null;
 		}
 
-		Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
-		Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
+		final Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
+		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
 
 		for (Map.Entry<WorldPoint, Pair<OreVeinState, Instant>> entry : plugin.getOreVeinStateMap().entrySet())
 		{
-			OreVeinState state = entry.getValue().getKey();
-			Instant time = entry.getValue().getValue();
-			LocalPoint localPoint = LocalPoint.fromWorld(client, entry.getKey());
+			final OreVeinState state = entry.getValue().getKey();
+			final Instant time = entry.getValue().getValue();
+			final LocalPoint localPoint = LocalPoint.fromWorld(client, entry.getKey());
 
 			if (localPoint == null)
 			{
@@ -102,10 +102,10 @@ class MLMUpperLevelIndicatorsOverlay extends Overlay
 			switch (state)
 			{
 				case MinedBySelf:
-					color = config.getSelfIndicatorColor();
+					color = config.getSelfMarkerColor();
 					break;
 				case MinedByOther:
-					color = config.showOther() ? config.getOtherIndicatorColor() : null;
+					color = config.showOther() ? config.getOtherMarkerColor() : null;
 					break;
 				default:
 					color = null;
