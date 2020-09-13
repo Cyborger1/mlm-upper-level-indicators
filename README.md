@@ -24,7 +24,7 @@ For details about the mechanics of the upper level veins in the Motherlode Mine,
   * It is possible to force trigger the markers by simply starting
     to mine a vein and walking back, then mining the vein again.
   * The markers will still trigger if you perform a full mining
-    animation cycle without mining a rock.
-  * While unlikely, it is possible to receive a pay-dirt on the
+    animation cycle without mining a pay-dirt.
+  * While fairly rare, it is possible to receive a pay-dirt on the
     first tick without playing the mining animation, meaning the
     marker will appear late.
