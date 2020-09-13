@@ -13,3 +13,11 @@ more chill.
 
 For details about the mechanics of the upper level veins in the Motherlode Mine, please visit the
 [Old School Runescape Wiki](https://oldschool.runescape.wiki/w/Motherlode_Mine#Upper_level).
+
+## Known issues
+
+* The plugin currently works by detecting the second time a player
+  performs a mining animation on a given tile. This means that:
+  * Mining two veins in a corner will cause the second vein to be
+    marked on the first animation rather than the second.
+  * Mining a new vein for a single pay-dirt will not be marked.
