@@ -21,3 +21,10 @@ For details about the mechanics of the upper level veins in the Motherlode Mine,
   * Mining two veins in a corner will cause the second vein to be
     marked on the first animation rather than the second.
   * Mining a new vein for a single pay-dirt will not be marked.
+  * It is possible to force trigger the markers by simply starting
+    to mine a vein and walking back.
+  * The markers will still trigger if you perform a full mining
+    animation cycle without mining a rock.
+  * While unlikely, it is possible to receive a pay-dirt on the
+    first tick without playing the mining animation, meaning the
+    marker will appear late.
