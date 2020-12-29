@@ -105,4 +105,15 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	{
 		return 27;
 	}
+
+	@ConfigItem(
+		keyName = "markerTimerMode",
+		name = "Show Marker Timer",
+		description = "Shows a timer on the marked tiles, either counting up or counting down to the max of the two timeout values",
+		position = 7
+	)
+	default MarkerTimerMode getMarkerTimerMode()
+	{
+		return MarkerTimerMode.Off;
+	}
 }

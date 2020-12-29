@@ -36,20 +36,25 @@ import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.Player;
+import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.client.ui.overlay.components.TextComponent;
 
 class MLMUpperLevelMarkersOverlay extends Overlay
 {
 	private static final int MAX_DISTANCE = 2350;
+	private static final int OFFSET_Z = -10;
 
 	private final Client client;
 	private final MLMUpperLevelMarkersPlugin plugin;
 	private final MLMUpperLevelMarkersConfig config;
+
+	private final TextComponent textComponent = new TextComponent();
 
 	@Inject
 	MLMUpperLevelMarkersOverlay(Client client, MLMUpperLevelMarkersPlugin plugin, MLMUpperLevelMarkersConfig config)
@@ -64,7 +69,6 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		// TODO: Plug config here
 		if (!plugin.isInMLM())
 		{
 			return null;
@@ -116,17 +120,55 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 				Polygon poly = Perspective.getCanvasTilePoly(client, localPoint);
 				if (poly != null)
 				{
-					Duration sinceTime = Duration.between(time, Instant.now());
-					if (firstTimeout.getSeconds() >= 0 && sinceTime.compareTo(firstTimeout) >= 0)
+					Instant now = Instant.now();
+					Duration sinceTime = Duration.between(time, now);
+					long t1 = firstTimeout.getSeconds();
+					long t2 = secondTimeout.getSeconds();
+					if (t1 >= 0 && sinceTime.compareTo(firstTimeout) >= 0)
 					{
 						color = color.darker();
 					}
-					if (secondTimeout.getSeconds() >= 0 && sinceTime.compareTo(secondTimeout) >= 0)
+					if (t2 >= 0 && sinceTime.compareTo(secondTimeout) >= 0)
 					{
 						color = color.darker();
 					}
 
 					OverlayUtil.renderPolygon(graphics, poly, color);
+
+					MarkerTimerMode timerMode = config.getMarkerTimerMode();
+					if (timerMode != MarkerTimerMode.Off)
+					{
+						long mills;
+						if (timerMode == MarkerTimerMode.Timeout && (t1 > 0 || t2 > 0))
+						{
+							mills = Duration.between(now, time.plusSeconds(Math.max(t1, t2))).toMillis();
+						}
+						else if (timerMode == MarkerTimerMode.Counter)
+						{
+							mills = sinceTime.toMillis();
+						}
+						else
+						{
+							// Will not print text
+							mills = -1;
+						}
+
+						if (mills >= 0)
+						{
+							String label = String.format("%.1f", mills / 1000f);
+							Point canvasTextLocation = Perspective.getCanvasTextLocation(
+								client, graphics, localPoint, label, OFFSET_Z);
+							if (canvasTextLocation != null)
+							{
+								textComponent.setText(label);
+								textComponent.setColor(color);
+								textComponent.setOutline(true);
+								textComponent.setPosition(
+									new java.awt.Point(canvasTextLocation.getX(), canvasTextLocation.getY()));
+								textComponent.render(graphics);
+							}
+						}
+					}
 				}
 			}
 		}
