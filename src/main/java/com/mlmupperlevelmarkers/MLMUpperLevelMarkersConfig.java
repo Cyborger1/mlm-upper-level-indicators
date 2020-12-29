@@ -116,4 +116,16 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	{
 		return MarkerTimerMode.Off;
 	}
+
+	@ConfigItem(
+		keyName = "markerTimerOffset",
+		name = "Marker Timer Offset",
+		description = "Adjust the height offset of the marker timers",
+		position = 8
+	)
+	@Range(min = -500, max = 500)
+	default int getMarkerOffset()
+	{
+		return 0;
+	}
 }

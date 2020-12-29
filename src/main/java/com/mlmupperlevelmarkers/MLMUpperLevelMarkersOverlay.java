@@ -48,7 +48,6 @@ import net.runelite.client.ui.overlay.components.TextComponent;
 class MLMUpperLevelMarkersOverlay extends Overlay
 {
 	private static final int MAX_DISTANCE = 2350;
-	private static final int OFFSET_Z = -10;
 
 	private final Client client;
 	private final MLMUpperLevelMarkersPlugin plugin;
@@ -89,6 +88,9 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 		final Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
 		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
+
+		MarkerTimerMode timerMode = config.getMarkerTimerMode();
+		int offset = config.getMarkerOffset();
 
 		for (Map.Entry<WorldPoint, StateTimePair> entry : plugin.getOreVeinStateMap().entrySet())
 		{
@@ -135,7 +137,6 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 					OverlayUtil.renderPolygon(graphics, poly, color);
 
-					MarkerTimerMode timerMode = config.getMarkerTimerMode();
 					if (timerMode != MarkerTimerMode.Off)
 					{
 						long mills;
@@ -157,7 +158,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 						{
 							String label = String.format("%.1f", mills / 1000f);
 							Point canvasTextLocation = Perspective.getCanvasTextLocation(
-								client, graphics, localPoint, label, OFFSET_Z);
+								client, graphics, localPoint, label, offset);
 							if (canvasTextLocation != null)
 							{
 								textComponent.setText(label);
