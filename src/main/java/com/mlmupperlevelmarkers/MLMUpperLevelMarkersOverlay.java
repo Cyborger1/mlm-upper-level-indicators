@@ -230,51 +230,38 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		final double actualInterpolate = (npoints * interpolate) - interpolatedLine;
 
 		graphics.setColor(color);
+
 		// So the lines don't jiggle around as they get interpolated
-		final Object prevStroke = graphics.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);
+		final Object prevStrokeControl = graphics.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);
 		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
 		final Stroke originalStroke = graphics.getStroke();
 		graphics.setStroke(new BasicStroke(2));
 
 		for (int i = 0; i < npoints; i++)
 		{
 			final int j = (i + 1) % npoints;
+			final int x1 = poly.xpoints[i];
+			final int y1 = poly.ypoints[i];
+			final int x2 = poly.xpoints[j];
+			final int y2 = poly.ypoints[j];
 			if (i == interpolatedLine)
 			{
-				double interX = lerp(poly.xpoints[i], poly.xpoints[j], actualInterpolate);
-				double interY = lerp(poly.ypoints[i], poly.ypoints[j], actualInterpolate);
-				graphics.draw(
-					new Line2D.Double(
-						poly.xpoints[i],
-						poly.ypoints[i],
-						interX,
-						interY
-					)
-				);
+				final double interX = lerp(x1, x2, actualInterpolate);
+				final double interY = lerp(y1, y2, actualInterpolate);
+				graphics.draw(new Line2D.Double(x1, y1, interX, interY));
 				graphics.setColor(color2);
-				graphics.draw(
-					new Line2D.Double(
-						interX,
-						interY,
-						poly.xpoints[j],
-						poly.ypoints[j]
-					)
-				);
+				graphics.draw(new Line2D.Double(interX, interY, x2, y2));
 			}
 			else
 			{
-				graphics.drawLine(
-					poly.xpoints[i],
-					poly.ypoints[i],
-					poly.xpoints[j],
-					poly.ypoints[j]
-				);
+				graphics.drawLine(x1, y1, x2, y2);
 			}
 		}
 
 		graphics.setColor(new Color(0, 0, 0, 50));
 		graphics.fill(poly);
-		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, prevStroke);
+		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, prevStrokeControl);
 		graphics.setStroke(originalStroke);
 	}
 
