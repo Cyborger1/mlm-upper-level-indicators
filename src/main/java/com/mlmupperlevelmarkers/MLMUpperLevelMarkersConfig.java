@@ -128,4 +128,15 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	{
 		return 0;
 	}
+
+	@ConfigItem(
+		keyName = "showContourTimer",
+		name = "Show Contour Timer",
+		description = "Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts",
+		position = 9
+	)
+	default boolean getShowContourTimer()
+	{
+		return false;
+	}
 }

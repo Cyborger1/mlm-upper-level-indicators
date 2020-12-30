@@ -25,10 +25,14 @@
  */
 package com.mlmupperlevelmarkers;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
+import java.awt.geom.Line2D;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -92,6 +96,10 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		MarkerTimerMode timerMode = config.getMarkerTimerMode();
 		int offset = config.getMarkerOffset();
 
+		final boolean showContour = config.getShowContourTimer();
+
+		final Instant now = Instant.now();
+
 		for (Map.Entry<WorldPoint, StateTimePair> entry : plugin.getOreVeinStateMap().entrySet())
 		{
 			final OreVeinState state = entry.getValue().getState();
@@ -122,8 +130,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 				Polygon poly = Perspective.getCanvasTilePoly(client, localPoint);
 				if (poly != null)
 				{
-					Instant now = Instant.now();
-					Duration sinceTime = Duration.between(time, now);
+					final Duration sinceTime = Duration.between(time, now);
 					long t1 = firstTimeout.getSeconds();
 					long t2 = secondTimeout.getSeconds();
 					if (t1 >= 0 && sinceTime.compareTo(firstTimeout) >= 0)
@@ -135,28 +142,56 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 						color = color.darker();
 					}
 
-					OverlayUtil.renderPolygon(graphics, poly, color);
+					// Adjust to treat disable (-1) as a value of 0
+					t1 = Math.max(t1, 0);
+					t2 = Math.max(t2, 0);
+
+					final long maxt = Math.max(t1, t2);
+					final double timeLeftMax = Duration.between(now, time.plusSeconds(maxt)).toMillis() / 1000f;
+					if (timeLeftMax <= 0 || !showContour)
+					{
+						OverlayUtil.renderPolygon(graphics, poly, color);
+					}
+					else
+					{
+						final long mint = Math.min(t1, t2);
+						final double timeLeftMin = Duration.between(now, time.plusSeconds(mint)).toMillis() / 1000f;
+
+						double timeLeft;
+						long target;
+						if (timeLeftMin > 0)
+						{
+							timeLeft = timeLeftMin;
+							target = mint;
+						}
+						else
+						{
+							timeLeft = timeLeftMax;
+							target = maxt - mint;
+						}
+						renderTileWithMovingColor(graphics, poly, color, color.darker(), timeLeft / target);
+					}
 
 					if (timerMode != MarkerTimerMode.Off)
 					{
-						long mills;
-						if (timerMode == MarkerTimerMode.Timeout && (t1 > 0 || t2 > 0))
+						double secs;
+						if (timerMode == MarkerTimerMode.Timeout && timeLeftMax > 0)
 						{
-							mills = Duration.between(now, time.plusSeconds(Math.max(t1, t2))).toMillis();
+							secs = timeLeftMax;
 						}
 						else if (timerMode == MarkerTimerMode.Counter)
 						{
-							mills = sinceTime.toMillis();
+							secs = sinceTime.toMillis() / 1000f;
 						}
 						else
 						{
 							// Will not print text
-							mills = -1;
+							secs = -1;
 						}
 
-						if (mills >= 0)
+						if (secs >= 0)
 						{
-							String label = String.format("%.1f", mills / 1000f);
+							String label = String.format("%.1f", secs);
 							Point canvasTextLocation = Perspective.getCanvasTextLocation(
 								client, graphics, localPoint, label, offset);
 							if (canvasTextLocation != null)
@@ -175,5 +210,76 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		}
 
 		return null;
+	}
+
+	public static void renderTileWithMovingColor(Graphics2D graphics, Polygon poly, Color color, Color color2, double interpolate)
+	{
+		if (interpolate <= 0)
+		{
+			OverlayUtil.renderPolygon(graphics, poly, color2);
+			return;
+		}
+		else if (interpolate >= 1)
+		{
+			OverlayUtil.renderPolygon(graphics, poly, color);
+			return;
+		}
+
+		final int npoints = poly.npoints;
+		final int interpolatedLine = (int) (npoints * interpolate);
+		final double actualInterpolate = (npoints * interpolate) - interpolatedLine;
+
+		graphics.setColor(color);
+		// So the lines don't jiggle around as they get interpolated
+		final Object prevStroke = graphics.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);
+		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+		final Stroke originalStroke = graphics.getStroke();
+		graphics.setStroke(new BasicStroke(2));
+
+		for (int i = 0; i < npoints; i++)
+		{
+			final int j = (i + 1) % npoints;
+			if (i == interpolatedLine)
+			{
+				double interX = lerp(poly.xpoints[i], poly.xpoints[j], actualInterpolate);
+				double interY = lerp(poly.ypoints[i], poly.ypoints[j], actualInterpolate);
+				graphics.draw(
+					new Line2D.Double(
+						poly.xpoints[i],
+						poly.ypoints[i],
+						interX,
+						interY
+					)
+				);
+				graphics.setColor(color2);
+				graphics.draw(
+					new Line2D.Double(
+						interX,
+						interY,
+						poly.xpoints[j],
+						poly.ypoints[j]
+					)
+				);
+			}
+			else
+			{
+				graphics.drawLine(
+					poly.xpoints[i],
+					poly.ypoints[i],
+					poly.xpoints[j],
+					poly.ypoints[j]
+				);
+			}
+		}
+
+		graphics.setColor(new Color(0, 0, 0, 50));
+		graphics.fill(poly);
+		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, prevStroke);
+		graphics.setStroke(originalStroke);
+	}
+
+	private static double lerp(double a, double b, double f)
+	{
+		return a + f * (b - a);
 	}
 }
