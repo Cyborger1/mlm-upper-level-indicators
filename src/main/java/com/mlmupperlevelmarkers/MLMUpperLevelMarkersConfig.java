@@ -107,10 +107,21 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "showContourTimer",
+		name = "Show Contour Timer",
+		description = "Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts",
+		position = 7
+	)
+	default boolean getShowContourTimer()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "markerTimerMode",
 		name = "Show Marker Timer",
 		description = "Shows a timer on the marked tiles, either counting up or counting down to the max of the two timeout values",
-		position = 7
+		position = 8
 	)
 	default MarkerTimerMode getMarkerTimerMode()
 	{
@@ -121,22 +132,11 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "markerTimerOffset",
 		name = "Marker Timer Offset",
 		description = "Adjust the height offset of the marker timers",
-		position = 8
+		position = 9
 	)
 	@Range(min = -500, max = 500)
 	default int getMarkerOffset()
 	{
 		return 0;
-	}
-
-	@ConfigItem(
-		keyName = "showContourTimer",
-		name = "Show Contour Timer",
-		description = "Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts",
-		position = 9
-	)
-	default boolean getShowContourTimer()
-	{
-		return false;
 	}
 }
