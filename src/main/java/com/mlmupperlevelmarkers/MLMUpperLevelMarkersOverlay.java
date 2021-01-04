@@ -93,12 +93,14 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		final Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
 		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
 
-		MarkerTimerMode timerMode = config.getMarkerTimerMode();
-		int offset = config.getMarkerOffset();
+		final MarkerTimerMode timerMode = config.getMarkerTimerMode();
+		final int offset = config.getMarkerOffset();
 
-		final boolean showContour = config.getShowContourTimer();
+		final boolean showContour = config.showContourTimer();
 
 		final Instant now = Instant.now();
+
+		final String timerFormat = "%." + (config.showMarkerTimerDecimal() ? 1 : 0) + "f";
 
 		for (Map.Entry<WorldPoint, StateTimePair> entry : plugin.getOreVeinStateMap().entrySet())
 		{
@@ -174,7 +176,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 					if (timerMode != MarkerTimerMode.Off)
 					{
-						double secs;
+						final double secs;
 						if (timerMode == MarkerTimerMode.Timeout && timeLeftMax > 0)
 						{
 							secs = timeLeftMax;
@@ -191,7 +193,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 						if (secs >= 0)
 						{
-							String label = String.format("%.1f", secs);
+							String label = String.format(timerFormat, secs);
 							Point canvasTextLocation = Perspective.getCanvasTextLocation(
 								client, graphics, localPoint, label, offset);
 							if (canvasTextLocation != null)
