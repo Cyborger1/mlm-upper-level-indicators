@@ -146,7 +146,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		position = 10
 	)
 	@Range(min = -500, max = 500)
-	default int getMarkerOffset()
+	default int getMarkerTimerOffset()
 	{
 		return 0;
 	}

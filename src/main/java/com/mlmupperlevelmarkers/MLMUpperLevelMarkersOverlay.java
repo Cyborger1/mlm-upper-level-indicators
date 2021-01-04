@@ -94,7 +94,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
 
 		final MarkerTimerMode timerMode = config.getMarkerTimerMode();
-		final int offset = config.getMarkerOffset();
+		final int offset = config.getMarkerTimerOffset();
 
 		final boolean showContour = config.showContourTimer();
 
