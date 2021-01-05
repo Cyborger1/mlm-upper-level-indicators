@@ -33,6 +33,8 @@ import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -100,7 +102,8 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 		final Instant now = Instant.now();
 
-		final String timerFormat = "%." + (config.showMarkerTimerDecimal() ? 1 : 0) + "f";
+		final DecimalFormat timerDecimalFormat = new DecimalFormat(config.showMarkerTimerDecimal() ? "0.0" : "0");
+		timerDecimalFormat.setRoundingMode(RoundingMode.CEILING);
 
 		for (Map.Entry<WorldPoint, StateTimePair> entry : plugin.getOreVeinStateMap().entrySet())
 		{
@@ -188,12 +191,12 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 						else
 						{
 							// Will not print text
-							secs = -1;
+							secs = 0;
 						}
 
-						if (secs >= 0)
+						if (secs > 0)
 						{
-							String label = String.format(timerFormat, secs);
+							String label = timerDecimalFormat.format(secs);
 							Point canvasTextLocation = Perspective.getCanvasTextLocation(
 								client, graphics, localPoint, label, offset);
 							if (canvasTextLocation != null)
