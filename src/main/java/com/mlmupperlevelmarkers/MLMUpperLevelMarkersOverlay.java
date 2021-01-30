@@ -211,7 +211,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 							{
 								textComponent.setText(label);
 								textComponent.setColor(color);
-								textComponent.setOutline(true);
+								textComponent.setOutline(config.showMarkerTimerOutline());
 								textComponent.setPosition(
 									new java.awt.Point(canvasTextLocation.getX(), canvasTextLocation.getY()));
 								textComponent.render(graphics);

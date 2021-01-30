@@ -153,4 +153,15 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	{
 		return 0;
 	}
+
+	@ConfigItem(
+		keyName = "markerTimerOutline",
+		name = "Marker Timer Outline",
+		description = "Show an outline around the text of the marker timers",
+		position = 11
+	)
+	default boolean showMarkerTimerOutline()
+	{
+		return true;
+	}
 }
