@@ -98,7 +98,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		final MarkerTimerMode timerMode = config.getMarkerTimerMode();
 		final int offset = config.getMarkerTimerOffset();
 
-		final boolean showContour = config.showContourTimer();
+		final TileMarkerType markerType = config.tileMarkerType();
 
 		final Instant now = Instant.now();
 
@@ -153,28 +153,36 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 					final long maxt = Math.max(t1, t2);
 					final double timeLeftMax = Duration.between(now, time.plusSeconds(maxt)).toMillis() / 1000f;
-					if (timeLeftMax <= 0 || !showContour)
-					{
-						OverlayUtil.renderPolygon(graphics, poly, color);
-					}
-					else
-					{
-						final long mint = Math.min(t1, t2);
-						final double timeLeftMin = Duration.between(now, time.plusSeconds(mint)).toMillis() / 1000f;
 
-						double timeLeft;
-						long target;
-						if (timeLeftMin > 0)
-						{
-							timeLeft = timeLeftMin;
-							target = mint;
-						}
-						else
-						{
-							timeLeft = timeLeftMax;
-							target = maxt - mint;
-						}
-						renderTileWithMovingColor(graphics, poly, color, color.darker(), timeLeft / target);
+					switch (markerType)
+					{
+						case CONTOUR_TIMER:
+							if (timeLeftMax <= 0)
+							{
+								OverlayUtil.renderPolygon(graphics, poly, color);
+							}
+							else
+							{
+								final long mint = Math.min(t1, t2);
+								final double timeLeftMin = Duration.between(now, time.plusSeconds(mint)).toMillis() / 1000f;
+
+								double timeLeft;
+								long target;
+								if (timeLeftMin > 0)
+								{
+									timeLeft = timeLeftMin;
+									target = mint;
+								}
+								else
+								{
+									timeLeft = timeLeftMax;
+									target = maxt - mint;
+								}
+								renderTileWithMovingColor(graphics, poly, color, color.darker(), timeLeft / target);
+							}
+							break;
+						case NORMAL:
+							OverlayUtil.renderPolygon(graphics, poly, color);
 					}
 
 					if (timerMode != MarkerTimerMode.Off)
