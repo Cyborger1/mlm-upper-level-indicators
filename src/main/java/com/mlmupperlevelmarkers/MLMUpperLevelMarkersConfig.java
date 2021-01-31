@@ -26,15 +26,20 @@
 package com.mlmupperlevelmarkers;
 
 import java.awt.Color;
+import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.Range;
 import net.runelite.client.config.Units;
 
-@ConfigGroup("mlmupperlevelmarkers")
+@ConfigGroup(MLMUpperLevelMarkersConfig.CONFIG_GROUP_NAME)
 public interface MLMUpperLevelMarkersConfig extends Config
 {
+	String CONFIG_GROUP_NAME = "mlmupperlevelmarkers";
+	String HIGHER_RENDER_PRIORITY_KEY_NAME = "higherRenderPriority";
+
+	@Alpha
 	@ConfigItem(
 		keyName = "selfMarkerColor",
 		name = "Self Marker Color",
@@ -46,6 +51,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		return Color.GREEN;
 	}
 
+	@Alpha
 	@ConfigItem(
 		keyName = "otherMarkerColor",
 		name = "Other Marker Color",
@@ -58,10 +64,24 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "tileMarkerType",
+		name = "Tile Marker Type",
+		description = "Choose a Tile Marker type<br>" +
+			"Hidden: Hides the tile markers, useful to reduce clutter if using marker timers<br>" +
+			"Normal: Shows regular tile markers<br>" +
+			"Contour Timer: Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts<br>",
+		position = 3
+	)
+	default TileMarkerType tileMarkerType()
+	{
+		return TileMarkerType.NORMAL;
+	}
+
+	@ConfigItem(
 		keyName = "showOtherMarkers",
 		name = "Show Other Players' Markers",
 		description = "Add markers to veins other players have mined",
-		position = 3
+		position = 4
 	)
 	default boolean showOtherMarkers()
 	{
@@ -72,7 +92,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "showOnlyWhenUpstairs",
 		name = "Show Only When Upstairs",
 		description = "Only show markers if you are upstairs",
-		position = 4
+		position = 5
 	)
 	default boolean showOnlyWhenUpstairs()
 	{
@@ -84,7 +104,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "firstTimeout",
 		name = "First Timeout",
 		description = "Darkens the marker after a vein has been first mined for this long (-1 to disable)",
-		position = 5
+		position = 6
 	)
 	@Units(Units.SECONDS)
 	@Range(min = -1)
@@ -97,27 +117,13 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "secondTimeout",
 		name = "Second Timeout",
 		description = "Darkens the marker again after a vein has been first mined for this long (-1 to disable)",
-		position = 6
+		position = 7
 	)
 	@Units(Units.SECONDS)
 	@Range(min = -1)
 	default int getSecondTimeout()
 	{
 		return 27;
-	}
-
-	@ConfigItem(
-		keyName = "tileMarkerType",
-		name = "Tile Marker Type",
-		description = "Choose a Tile Marker type<br>" +
-			"Hidden: Hides the tile markers, useful to reduce clutter if using marker timers<br>" +
-			"Normal: Shows regular tile markers<br>" +
-			"Contour Timer: Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts<br>",
-		position = 7
-	)
-	default TileMarkerType tileMarkerType()
-	{
-		return TileMarkerType.NORMAL;
 	}
 
 	@ConfigItem(
@@ -143,10 +149,21 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "markerTimerOutline",
+		name = "Marker Timer Outline",
+		description = "Show an outline around the text of the marker timers",
+		position = 10
+	)
+	default boolean showMarkerTimerOutline()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 		keyName = "markerTimerOffset",
 		name = "Marker Timer Offset",
 		description = "Adjust the height offset of the marker timers",
-		position = 10
+		position = 11
 	)
 	@Range(min = -500, max = 500)
 	default int getMarkerTimerOffset()
@@ -155,13 +172,15 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "markerTimerOutline",
-		name = "Marker Timer Outline",
-		description = "Show an outline around the text of the marker timers",
-		position = 11
+		keyName = HIGHER_RENDER_PRIORITY_KEY_NAME,
+		name = "Higher Render Priority",
+		description = "Gives a higher rendering priority to the markers and timers.<br>" +
+			"Use to ensure the timers always appear above the Motherlode mining icons, but may cause some issues with other overlays.<br>" +
+			"Alternatively, turning this setting on and off forces the overlay to be on top, but the order may still off on future Runelite relaunches.",
+		position = 12
 	)
-	default boolean showMarkerTimerOutline()
+	default boolean higherRenderPriority()
 	{
-		return true;
+		return false;
 	}
 }

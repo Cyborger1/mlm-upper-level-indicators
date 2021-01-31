@@ -60,6 +60,7 @@ import net.runelite.api.events.PlayerDespawned;
 import net.runelite.api.events.WallObjectSpawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -143,6 +144,21 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 			case LOGIN_SCREEN:
 				inMLM = false;
 				break;
+		}
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals(MLMUpperLevelMarkersConfig.CONFIG_GROUP_NAME)
+			&& event.getKey().equals(MLMUpperLevelMarkersConfig.HIGHER_RENDER_PRIORITY_KEY_NAME))
+		{
+			if (overlay != null)
+			{
+				overlayManager.remove(overlay);
+				overlay.setPriority(config.higherRenderPriority());
+				overlayManager.add(overlay);
+			}
 		}
 	}
 

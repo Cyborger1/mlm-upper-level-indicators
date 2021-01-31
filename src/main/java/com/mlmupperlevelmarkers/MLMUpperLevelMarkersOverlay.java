@@ -65,10 +65,15 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 	MLMUpperLevelMarkersOverlay(Client client, MLMUpperLevelMarkersPlugin plugin, MLMUpperLevelMarkersConfig config)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_SCENE);
+		setPriority(config.higherRenderPriority());
 		this.client = client;
 		this.plugin = plugin;
 		this.config = config;
+	}
+
+	public void setPriority(boolean higher)
+	{
+		setLayer(higher ? OverlayLayer.UNDER_WIDGETS : OverlayLayer.ABOVE_SCENE);
 	}
 
 	@Override
