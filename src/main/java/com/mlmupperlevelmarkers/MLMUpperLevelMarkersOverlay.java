@@ -32,7 +32,7 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.Duration;
@@ -243,39 +243,48 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 			return;
 		}
 
-		final int npoints = poly.npoints;
-		final int interpolatedLine = (int) (npoints * interpolate);
-		final double actualInterpolate = (npoints * interpolate) - interpolatedLine;
+		final int numPoints = poly.npoints;
+		final int interpolatedLine = (int) (numPoints * interpolate);
+		final double actualInterpolate = (numPoints * interpolate) - interpolatedLine;
 
-		graphics.setColor(color);
+		Path2D p1 = new Path2D.Double();
+		Path2D p2 = new Path2D.Double();
+
+		p1.moveTo(poly.xpoints[0], poly.ypoints[0]);
+
+		Path2D curP = p1;
+
+		for (int i = 0; i < numPoints; i++)
+		{
+			final int j = (i + 1) % numPoints;
+			final int x2 = poly.xpoints[j];
+			final int y2 = poly.ypoints[j];
+
+			if (i == interpolatedLine)
+			{
+				final int x1 = poly.xpoints[i];
+				final int y1 = poly.ypoints[i];
+				final double interX = lerp(x1, x2, actualInterpolate);
+				final double interY = lerp(y1, y2, actualInterpolate);
+				curP.lineTo(interX, interY);
+				curP = p2;
+				curP.moveTo(interX, interY);
+			}
+
+			curP.lineTo(x2, y2);
+		}
 
 		// So the lines don't jiggle around as they get interpolated
 		final Object prevStrokeControl = graphics.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);
 		graphics.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 
 		final Stroke originalStroke = graphics.getStroke();
-		graphics.setStroke(new BasicStroke(2));
+		graphics.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
 
-		for (int i = 0; i < npoints; i++)
-		{
-			final int j = (i + 1) % npoints;
-			final int x1 = poly.xpoints[i];
-			final int y1 = poly.ypoints[i];
-			final int x2 = poly.xpoints[j];
-			final int y2 = poly.ypoints[j];
-			if (i == interpolatedLine)
-			{
-				final double interX = lerp(x1, x2, actualInterpolate);
-				final double interY = lerp(y1, y2, actualInterpolate);
-				graphics.draw(new Line2D.Double(x1, y1, interX, interY));
-				graphics.setColor(color2);
-				graphics.draw(new Line2D.Double(interX, interY, x2, y2));
-			}
-			else
-			{
-				graphics.drawLine(x1, y1, x2, y2);
-			}
-		}
+		graphics.setColor(color);
+		graphics.draw(p1);
+		graphics.setColor(color2);
+		graphics.draw(p2);
 
 		graphics.setColor(new Color(0, 0, 0, 50));
 		graphics.fill(poly);
