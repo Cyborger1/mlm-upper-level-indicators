@@ -131,7 +131,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		name = "Marker Timer Mode",
 		description = "Shows a timer on the marked tiles.<br>" +
 			"Hidden: No timer is shown.<br>" +
-			"Timeout: Counts down to the max of the two timeout values.<br>" +
+			"Timeout: Counts down from the max of the two timeout values.<br>" +
 			"Timeout (p): Same as Timeout, but persists when it reaches 0.<br>" +
 			"Counter: Counts up from when a vein is first mined.",
 		position = 8
