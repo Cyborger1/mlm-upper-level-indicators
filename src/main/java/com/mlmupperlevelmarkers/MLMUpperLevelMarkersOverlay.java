@@ -193,9 +193,15 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 					if (timerMode != MarkerTimerMode.Off)
 					{
 						final double secs;
-						if (timerMode == MarkerTimerMode.Timeout && timeLeftMax > 0)
+						boolean persistent = false;
+						if (timerMode == MarkerTimerMode.Timeout)
 						{
 							secs = timeLeftMax;
+						}
+						else if (timerMode == MarkerTimerMode.PersistentTimeout)
+						{
+							secs = Math.max(0, timeLeftMax);
+							persistent = true;
 						}
 						else if (timerMode == MarkerTimerMode.Counter)
 						{
@@ -207,7 +213,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 							secs = 0;
 						}
 
-						if (secs > 0)
+						if (persistent || secs > 0)
 						{
 							String label = timerDecimalFormat.format(secs);
 							Point canvasTextLocation = Perspective.getCanvasTextLocation(

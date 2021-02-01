@@ -43,7 +43,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "selfMarkerColor",
 		name = "Self Marker Color",
-		description = "Color of markers on veins you've mined",
+		description = "Color of markers on veins you've mined.",
 		position = 1
 	)
 	default Color getSelfMarkerColor()
@@ -55,7 +55,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "otherMarkerColor",
 		name = "Other Marker Color",
-		description = "Color of markers on veins other players have mined",
+		description = "Color of markers on veins other players have mined.",
 		position = 2
 	)
 	default Color getOtherMarkerColor()
@@ -66,10 +66,10 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "tileMarkerType",
 		name = "Tile Marker Type",
-		description = "Choose a Tile Marker type<br>" +
-			"Hidden: Hides the tile markers, useful to reduce clutter if using marker timers<br>" +
-			"Normal: Shows regular tile markers<br>" +
-			"Contour Timer: Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts<br>",
+		description = "Choose a Tile Marker type.<br>" +
+			"Hidden: Hides the tile markers, useful to reduce clutter if using marker timers.<br>" +
+			"Normal: Shows regular tile markers.<br>" +
+			"Contour Timer: Makes the contour of the tile markers behave as a pie-chart of sorts with the timeouts.",
 		position = 3
 	)
 	default TileMarkerType tileMarkerType()
@@ -80,7 +80,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "showOtherMarkers",
 		name = "Show Other Players' Markers",
-		description = "Add markers to veins other players have mined",
+		description = "Add markers to veins other players have mined.",
 		position = 4
 	)
 	default boolean showOtherMarkers()
@@ -91,7 +91,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "showOnlyWhenUpstairs",
 		name = "Show Only When Upstairs",
-		description = "Only show markers if you are upstairs",
+		description = "Only show markers if you are upstairs.",
 		position = 5
 	)
 	default boolean showOnlyWhenUpstairs()
@@ -103,7 +103,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "firstTimeout",
 		name = "First Timeout",
-		description = "Darkens the marker after a vein has been first mined for this long (-1 to disable)",
+		description = "Darkens the marker after a vein has been first mined for this long (-1 to disable).",
 		position = 6
 	)
 	@Units(Units.SECONDS)
@@ -116,7 +116,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "secondTimeout",
 		name = "Second Timeout",
-		description = "Darkens the marker again after a vein has been first mined for this long (-1 to disable)",
+		description = "Darkens the marker again after a vein has been first mined for this long (-1 to disable).",
 		position = 7
 	)
 	@Units(Units.SECONDS)
@@ -128,8 +128,12 @@ public interface MLMUpperLevelMarkersConfig extends Config
 
 	@ConfigItem(
 		keyName = "markerTimerMode",
-		name = "Show Marker Timer",
-		description = "Shows a timer on the marked tiles, either counting up or counting down to the max of the two timeout values",
+		name = "Marker Timer Mode",
+		description = "Shows a timer on the marked tiles.<br>" +
+			"Hidden: No timer is shown.<br>" +
+			"Timeout: Counts down to the max of the two timeout values.<br>" +
+			"Timeout (p): Same as Timeout, but persists when it reaches 0.<br>" +
+			"Counter: Counts up from when a vein is first mined.",
 		position = 8
 	)
 	default MarkerTimerMode getMarkerTimerMode()
@@ -140,7 +144,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "showMarkerTimerDecimal",
 		name = "Show Marker Timer Decimal",
-		description = "Shows the tenth of seconds decimal on the marker timers",
+		description = "Shows the tenth of seconds decimal on the marker timers.",
 		position = 9
 	)
 	default boolean showMarkerTimerDecimal()
@@ -150,8 +154,8 @@ public interface MLMUpperLevelMarkersConfig extends Config
 
 	@ConfigItem(
 		keyName = "markerTimerOutline",
-		name = "Marker Timer Outline",
-		description = "Show an outline around the text of the marker timers",
+		name = "Show Marker Timer Outline",
+		description = "Show an outline around the text of the marker timers.",
 		position = 10
 	)
 	default boolean showMarkerTimerOutline()
@@ -162,7 +166,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	@ConfigItem(
 		keyName = "markerTimerOffset",
 		name = "Marker Timer Offset",
-		description = "Adjust the height offset of the marker timers",
+		description = "Adjust the height offset of the marker timers.",
 		position = 11
 	)
 	@Range(min = -500, max = 500)

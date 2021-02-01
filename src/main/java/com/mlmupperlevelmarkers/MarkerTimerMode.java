@@ -27,7 +27,27 @@ package com.mlmupperlevelmarkers;
 
 public enum MarkerTimerMode
 {
-	Off,
-	Timeout,
-	Counter
+	Off("Hidden"),
+	Timeout("Timeout"),
+	PersistentTimeout("Timeout (p)"),
+	Counter("Counter"),
+	;
+
+	private final String name;
+
+	MarkerTimerMode(String name)
+	{
+		this.name = name;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 }
