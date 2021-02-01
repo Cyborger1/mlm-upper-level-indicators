@@ -190,43 +190,37 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 							OverlayUtil.renderPolygon(graphics, poly, color);
 					}
 
-					if (timerMode != MarkerTimerMode.Off)
-					{
-						final double secs;
-						boolean persistent = false;
-						if (timerMode == MarkerTimerMode.Timeout)
-						{
-							secs = timeLeftMax;
-						}
-						else if (timerMode == MarkerTimerMode.PersistentTimeout)
-						{
-							secs = Math.max(0, timeLeftMax);
-							persistent = true;
-						}
-						else if (timerMode == MarkerTimerMode.Counter)
-						{
-							secs = sinceTime.toMillis() / 1000f;
-						}
-						else
-						{
-							// Will not print text
-							secs = 0;
-						}
+					Double secs = null;
 
-						if (persistent || secs > 0)
-						{
-							String label = timerDecimalFormat.format(secs);
-							Point canvasTextLocation = Perspective.getCanvasTextLocation(
-								client, graphics, localPoint, label, offset);
-							if (canvasTextLocation != null)
+					switch (timerMode)
+					{
+						case Timeout:
+							if (timeLeftMax > 0)
 							{
-								textComponent.setText(label);
-								textComponent.setColor(color);
-								textComponent.setOutline(config.showMarkerTimerOutline());
-								textComponent.setPosition(
-									new java.awt.Point(canvasTextLocation.getX(), canvasTextLocation.getY()));
-								textComponent.render(graphics);
+								secs = timeLeftMax;
 							}
+							break;
+						case PersistentTimeout:
+							secs = Math.max(0, timeLeftMax);
+							break;
+						case Counter:
+							secs = sinceTime.toMillis() / 1000d;
+							break;
+					}
+
+					if (secs != null)
+					{
+						String label = timerDecimalFormat.format(secs);
+						Point canvasTextLocation = Perspective.getCanvasTextLocation(
+							client, graphics, localPoint, label, offset);
+						if (canvasTextLocation != null)
+						{
+							textComponent.setText(label);
+							textComponent.setColor(color);
+							textComponent.setOutline(config.showMarkerTimerOutline());
+							textComponent.setPosition(
+								new java.awt.Point(canvasTextLocation.getX(), canvasTextLocation.getY()));
+							textComponent.render(graphics);
 						}
 					}
 				}
