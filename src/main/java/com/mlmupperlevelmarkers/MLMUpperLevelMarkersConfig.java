@@ -177,10 +177,9 @@ public interface MLMUpperLevelMarkersConfig extends Config
 
 	@ConfigItem(
 		keyName = HIGHER_RENDER_PRIORITY_KEY_NAME,
-		name = "Higher Render Priority",
-		description = "Gives a higher rendering priority to the markers and timers.<br>" +
-			"Use to ensure the timers always appear above the Motherlode mining icons, but may cause some issues with other overlays.<br>" +
-			"Alternatively, turning this setting on and off forces the overlay to be on top, but the order may still off on future Runelite relaunches.",
+		name = "Render Above Motherlode Icons",
+		description = "Gives a higher rendering priority to the markers and timers,<br>" +
+			"allowing them to appear above the Motherlode plugin mining icons.",
 		position = 12
 	)
 	default boolean higherRenderPriority()

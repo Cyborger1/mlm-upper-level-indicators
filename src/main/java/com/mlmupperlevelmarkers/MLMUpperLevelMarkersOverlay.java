@@ -48,6 +48,7 @@ import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.TextComponent;
 
@@ -65,6 +66,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 	MLMUpperLevelMarkersOverlay(Client client, MLMUpperLevelMarkersPlugin plugin, MLMUpperLevelMarkersConfig config)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
+		setLayer(OverlayLayer.ABOVE_SCENE);
 		setPriority(config.higherRenderPriority());
 		this.client = client;
 		this.plugin = plugin;
@@ -73,7 +75,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 	public void setPriority(boolean higher)
 	{
-		setLayer(higher ? OverlayLayer.UNDER_WIDGETS : OverlayLayer.ABOVE_SCENE);
+		setPriority(higher ? OverlayPriority.MED : OverlayPriority.LOW);
 	}
 
 	@Override
