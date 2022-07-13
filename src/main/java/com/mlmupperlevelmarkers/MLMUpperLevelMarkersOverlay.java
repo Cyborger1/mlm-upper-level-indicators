@@ -101,6 +101,7 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 
 		final Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
 		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
+		final Duration respawnTimeout = Duration.ofSeconds(config.getRespawnTimeout());
 
 		final MarkerTimerMode timerMode = config.getMarkerTimerMode();
 		final int offset = config.getMarkerTimerOffset();
@@ -116,9 +117,16 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		{
 			final OreVeinState state = entry.getValue().getState();
 			final Instant time = entry.getValue().getTime();
+			final Duration sinceTime = Duration.between(time, now);
 			final LocalPoint localPoint = LocalPoint.fromWorld(client, entry.getKey());
 
 			if (localPoint == null)
+			{
+				continue;
+			}
+
+			// Do not display anymore if "respawned"
+			if (respawnTimeout.getSeconds() >= 0 && sinceTime.compareTo(respawnTimeout) >= 0)
 			{
 				continue;
 			}
@@ -142,7 +150,6 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 				Polygon poly = Perspective.getCanvasTilePoly(client, localPoint);
 				if (poly != null)
 				{
-					final Duration sinceTime = Duration.between(time, now);
 					long t1 = firstTimeout.getSeconds();
 					long t2 = secondTimeout.getSeconds();
 					if (t1 >= 0 && sinceTime.compareTo(firstTimeout) >= 0)

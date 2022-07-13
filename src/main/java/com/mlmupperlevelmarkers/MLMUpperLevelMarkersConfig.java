@@ -127,6 +127,19 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "respawnTimeout",
+		name = "Respawn Timeout",
+		description = "Deletes the marker for a vein when it's been this long after first being mined (-1 to disable).",
+		position = 8
+	)
+	@Units(Units.SECONDS)
+	@Range(min = -1)
+	default int getRespawnTimeout()
+	{
+		return 120;
+	}
+
+	@ConfigItem(
 		keyName = "markerTimerMode",
 		name = "Marker Timer Mode",
 		description = "Shows a timer on the marked tiles.<br>" +
@@ -134,7 +147,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 			"Timeout: Counts down from the max of the two timeout values.<br>" +
 			"Timeout (p): Same as Timeout, but persists when it reaches 0.<br>" +
 			"Counter: Counts up from when a vein is first mined.",
-		position = 8
+		position = 9
 	)
 	default MarkerTimerMode getMarkerTimerMode()
 	{
@@ -145,7 +158,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "showMarkerTimerDecimal",
 		name = "Show Marker Timer Decimal",
 		description = "Shows the tenth of seconds decimal on the marker timers.",
-		position = 9
+		position = 10
 	)
 	default boolean showMarkerTimerDecimal()
 	{
@@ -156,7 +169,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "markerTimerOutline",
 		name = "Show Marker Timer Outline",
 		description = "Show an outline around the text of the marker timers.",
-		position = 10
+		position = 11
 	)
 	default boolean showMarkerTimerOutline()
 	{
@@ -167,7 +180,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "markerTimerOffset",
 		name = "Marker Timer Offset",
 		description = "Adjust the height offset of the marker timers.",
-		position = 11
+		position = 12
 	)
 	@Range(min = -500, max = 500)
 	default int getMarkerTimerOffset()
@@ -180,7 +193,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		name = "Render Above Motherlode Icons",
 		description = "Gives a higher rendering priority to the markers and timers,<br>" +
 			"allowing them to appear above the Motherlode plugin mining icons.",
-		position = 12
+		position = 13
 	)
 	default boolean higherRenderPriority()
 	{
