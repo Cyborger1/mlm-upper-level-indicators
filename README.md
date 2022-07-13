@@ -14,6 +14,19 @@ more chill.
 For details about the mechanics of the upper level veins in the Motherlode Mine, please visit the
 [Old School Runescape Wiki](https://oldschool.runescape.wiki/w/Motherlode_Mine#Upper_level).
 
+## Update
+
+As of [2022-07-13](https://secure.runescape.com/m=news/emirs-arena-full-launch?oldschool=1),
+Upper Level Motherlode ore veins have their respawn timer start
+from the ore timer ending rather than the ore being depleted!
+This means this plugin is now slightly redundant, however a new
+config setting, **Respawn Timeout**, has been added to reflect
+this change.
+
+By default, after two minutes of one of this plugin's markers
+being active, it will remove itself if the rock has not been
+fully mined yet, assuming the rock is about to respawn.
+
 ## Known issues
 
 * The plugin currently works by detecting the second time a player

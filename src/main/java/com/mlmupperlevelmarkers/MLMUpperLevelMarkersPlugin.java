@@ -27,6 +27,7 @@ package com.mlmupperlevelmarkers;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -211,16 +212,24 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 			if (obj != null && MINE_SPOTS.contains(obj.getId()))
 			{
 				final StateTimePair prevValue;
+				final Instant now = Instant.now();
 
 				if (oreVeinStateMap.containsKey(target))
 				{
 					prevValue = oreVeinStateMap.get(target);
+					// If "respawned", reset the state of the rock
+					final int respawnSeconds = config.getRespawnTimeout();
+					if (respawnSeconds >= 0 && Duration.between(prevValue.getTime(), now).compareTo(Duration.ofSeconds(respawnSeconds)) >= 0)
+					{
+						prevValue.setState(OreVeinState.Untouched);
+						prevValue.setTime(now);
+					}
 				}
 				else
 				{
 					prevValue = StateTimePair.builder()
 						.state(OreVeinState.Untouched)
-						.time(Instant.now()).build();
+						.time(now).build();
 				}
 
 				if (prevValue.getState() != OreVeinState.MinedBySelf)
