@@ -16,7 +16,7 @@ For details about the mechanics of the upper level veins in the Motherlode Mine,
 
 ## Update
 
-As of [2022-07-13](https://secure.runescape.com/m=news/emirs-arena-full-launch?oldschool=1#_ga=2.107576203.843614121.1657719962-1391612927.1631975464),
+As of [2022-07-13](https://secure.runescape.com/m=news/emirs-arena-full-launch?oldschool=1),
 Upper Level Motherlode ore veins have their respawn timer start
 from the ore timer ending rather than the ore being depleted!
 This means this plugin is now slightly redundant, however a new
