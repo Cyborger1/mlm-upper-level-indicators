@@ -92,14 +92,14 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 		}
 
 		final LocalPoint playerLocalPoint = localPlayer.getLocalLocation();
+		final boolean playerUpstairs = plugin.isUpstairs(playerLocalPoint);
+		final boolean checkSameLevel = config.showOnlyOnSameLevel();
+		final ShowMarkerType markersToShow = config.getMarkersToShow();
 
-		if (config.showOnlyWhenUpstairs() && !plugin.isUpstairs(playerLocalPoint))
-		{
-			return null;
-		}
-
-		final Duration firstTimeout = Duration.ofSeconds(config.getFirstTimeout());
-		final Duration secondTimeout = Duration.ofSeconds(config.getSecondTimeout());
+		final Duration firstTimeoutUL = Duration.ofSeconds(config.getFirstTimeoutUL());
+		final Duration secondTimeoutUL = Duration.ofSeconds(config.getSecondTimeoutUL());
+		final Duration firstTimeoutLL = Duration.ofSeconds(config.getFirstTimeoutLL());
+		final Duration secondTimeoutLL = Duration.ofSeconds(config.getSecondTimeoutLL());
 		final Duration respawnTimeout = Duration.ofSeconds(config.getRespawnTimeout());
 
 		final MarkerTimerMode timerMode = config.getMarkerTimerMode();
@@ -124,6 +124,15 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 				continue;
 			}
 
+			final boolean pointUpstairs = plugin.isUpstairs(localPoint);
+
+			if (markersToShow == ShowMarkerType.UPPER && !pointUpstairs
+				|| markersToShow == ShowMarkerType.LOWER && pointUpstairs
+				|| checkSameLevel && playerUpstairs != pointUpstairs)
+			{
+				continue;
+			}
+			
 			// Do not display anymore if "respawned"
 			if (respawnTimeout.getSeconds() >= 0 && sinceTime.compareTo(respawnTimeout) >= 0)
 			{
@@ -144,18 +153,21 @@ class MLMUpperLevelMarkersOverlay extends Overlay
 					break;
 			}
 
+			final Duration ft = pointUpstairs ? firstTimeoutUL : firstTimeoutLL;
+			final Duration st = pointUpstairs ? secondTimeoutUL : secondTimeoutLL;
+
 			if (color != null && playerLocalPoint.distanceTo(localPoint) <= MAX_DISTANCE)
 			{
 				Polygon poly = Perspective.getCanvasTilePoly(client, localPoint);
 				if (poly != null)
 				{
-					long t1 = firstTimeout.getSeconds();
-					long t2 = secondTimeout.getSeconds();
-					if (t1 >= 0 && sinceTime.compareTo(firstTimeout) >= 0)
+					long t1 = ft.getSeconds();
+					long t2 = st.getSeconds();
+					if (t1 >= 0 && sinceTime.compareTo(ft) >= 0)
 					{
 						color = color.darker();
 					}
-					if (t2 >= 0 && sinceTime.compareTo(secondTimeout) >= 0)
+					if (t2 >= 0 && sinceTime.compareTo(st) >= 0)
 					{
 						color = color.darker();
 					}

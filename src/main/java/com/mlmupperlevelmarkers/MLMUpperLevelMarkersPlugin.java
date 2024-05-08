@@ -206,7 +206,7 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 		final WorldPoint target = getWorldLocationInFront(actor);
 		final LocalPoint localTarget = LocalPoint.fromWorld(client, target);
 
-		if (localTarget != null && isUpstairs(localTarget))
+		if (localTarget != null)
 		{
 			final WallObject obj = client.getScene().getTiles()[0][localTarget.getSceneX()][localTarget.getSceneY()].getWallObject();
 			if (obj != null && MINE_SPOTS.contains(obj.getId()))
@@ -256,7 +256,7 @@ public class MLMUpperLevelMarkersPlugin extends Plugin
 		}
 
 		WallObject obj = event.getWallObject();
-		if (DEPLETED_SPOTS.contains(obj.getId()) && isUpstairs(obj.getLocalLocation()))
+		if (DEPLETED_SPOTS.contains(obj.getId()))
 		{
 			oreVeinStateMap.remove(obj.getWorldLocation());
 		}

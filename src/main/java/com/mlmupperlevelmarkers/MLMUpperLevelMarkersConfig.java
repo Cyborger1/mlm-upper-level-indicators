@@ -89,39 +89,75 @@ public interface MLMUpperLevelMarkersConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "showOnlyWhenUpstairs",
-		name = "Show Only When Upstairs",
-		description = "Only show markers if you are upstairs.",
+		keyName = "showOnlyOnSameLevel",
+		name = "Show Only When On Same Level",
+		description = "Only show markers on the same level as you.",
 		position = 5
 	)
-	default boolean showOnlyWhenUpstairs()
+	default boolean showOnlyOnSameLevel()
 	{
 		return true;
 	}
 
-	// 15 and 27 are values from the osrs wiki on approximate lifetime of upper level MLM veins
 	@ConfigItem(
-		keyName = "firstTimeout",
-		name = "First Timeout",
-		description = "Darkens the marker after a vein has been first mined for this long (-1 to disable).",
+		keyName = "markersToShow",
+		name = "Markers to Show",
+		description = "Select which levels the markers should show on.",
 		position = 6
 	)
-	@Units(Units.SECONDS)
-	@Range(min = -1)
-	default int getFirstTimeout()
+	default ShowMarkerType getMarkersToShow()
 	{
-		return 15;
+		return ShowMarkerType.BOTH;
 	}
 
+	// 23-27 and 36-40 are values from https://secure.runescape.com/m=news/project-rebalance-skilling--poll-81-mta-changes?oldschool=1
 	@ConfigItem(
-		keyName = "secondTimeout",
-		name = "Second Timeout",
-		description = "Darkens the marker again after a vein has been first mined for this long (-1 to disable).",
+		keyName = "firstTimeoutUL",
+		name = "(Upper) First Timeout",
+		description = "(Upper level) Darkens the marker after a vein has been first mined for this long (-1 to disable).",
 		position = 7
 	)
 	@Units(Units.SECONDS)
 	@Range(min = -1)
-	default int getSecondTimeout()
+	default int getFirstTimeoutUL()
+	{
+		return 36;
+	}
+
+	@ConfigItem(
+		keyName = "secondTimeoutUL",
+		name = "(Upper) Second Timeout",
+		description = "(Upper level) Darkens the marker again after a vein has been first mined for this long (-1 to disable).",
+		position = 8
+	)
+	@Units(Units.SECONDS)
+	@Range(min = -1)
+	default int getSecondTimeoutUL()
+	{
+		return 40;
+	}
+	@ConfigItem(
+		keyName = "firstTimeoutLL",
+		name = "(Lower) First Timeout",
+		description = "(Lower level) Darkens the marker after a vein has been first mined for this long (-1 to disable).",
+		position = 9
+	)
+	@Units(Units.SECONDS)
+	@Range(min = -1)
+	default int getFirstTimeoutLL()
+	{
+		return 23;
+	}
+
+	@ConfigItem(
+		keyName = "secondTimeoutLL",
+		name = "(Lower) Second Timeout",
+		description = "(Lower level) Darkens the marker again after a vein has been first mined for this long (-1 to disable).",
+		position = 10
+	)
+	@Units(Units.SECONDS)
+	@Range(min = -1)
+	default int getSecondTimeoutLL()
 	{
 		return 27;
 	}
@@ -130,7 +166,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "respawnTimeout",
 		name = "Respawn Timeout",
 		description = "Deletes the marker for a vein when it's been this long after first being mined (-1 to disable).",
-		position = 8
+		position = 11
 	)
 	@Units(Units.SECONDS)
 	@Range(min = -1)
@@ -147,7 +183,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 			"Timeout: Counts down from the max of the two timeout values.<br>" +
 			"Timeout (p): Same as Timeout, but persists when it reaches 0.<br>" +
 			"Counter: Counts up from when a vein is first mined.",
-		position = 9
+		position = 12
 	)
 	default MarkerTimerMode getMarkerTimerMode()
 	{
@@ -158,7 +194,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "showMarkerTimerDecimal",
 		name = "Show Marker Timer Decimal",
 		description = "Shows the tenth of seconds decimal on the marker timers.",
-		position = 10
+		position = 13
 	)
 	default boolean showMarkerTimerDecimal()
 	{
@@ -169,7 +205,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "markerTimerOutline",
 		name = "Show Marker Timer Outline",
 		description = "Show an outline around the text of the marker timers.",
-		position = 11
+		position = 14
 	)
 	default boolean showMarkerTimerOutline()
 	{
@@ -180,7 +216,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		keyName = "markerTimerOffset",
 		name = "Marker Timer Offset",
 		description = "Adjust the height offset of the marker timers.",
-		position = 12
+		position = 15
 	)
 	@Range(min = -500, max = 500)
 	default int getMarkerTimerOffset()
@@ -193,7 +229,7 @@ public interface MLMUpperLevelMarkersConfig extends Config
 		name = "Render Above Motherlode Icons",
 		description = "Gives a higher rendering priority to the markers and timers,<br>" +
 			"allowing them to appear above the Motherlode plugin mining icons.",
-		position = 13
+		position = 16
 	)
 	default boolean higherRenderPriority()
 	{
