@@ -1,8 +1,8 @@
-# Motherlode Mine Upper Level Markers
+# Motherlode Mine Mining Markers
 ![MLM Markers in Action](mlmmarkers.png)
 
 This plugin helps you remember which veins you've mined in
-the upper level of the Motherlode Mine as well as keep track
+the Motherlode Mine as well as keep track
 of veins mined by other players.
 
 While not perfect, this will help you identify veins that only
@@ -26,6 +26,15 @@ this change.
 By default, after two minutes of one of this plugin's markers
 being active, it will remove itself if the rock has not been
 fully mined yet, assuming the rock is about to respawn.
+
+## Update 2
+
+As of [2024-05-08](https://secure.runescape.com/m=news/project-rebalance-skilling--poll-81-mta-changes?oldschool=1),
+both levels of the Motherlode Mine have their ore veins function on timers!
+The plugin has been modified to reflect this change, allowing you to set
+timeouts for both upper and lower level separately. The option to show only
+the markers when on the upper level has been changed to either showing all markers
+or only markers on the same level as yours.
 
 ## Known issues
 
